@@ -1,16 +1,21 @@
-# React + Vite
+# Ambient Expense Agent - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the React frontend for the **Ambient Expense Agent**. It provides a sleek, modern, glassmorphic UI to interact with the backend AI agent for expense submissions and risk reviews.
 
-Currently, two official plugins are available:
+## 🔗 Backend Repository
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This frontend is designed to work in tandem with the ADK (Agent Development Kit) backend repository:
+**[ambient-expense-agent Backend Repository](https://github.com/moldovita2-arch/ambient-expense-agent)**
 
-## React Compiler
+Ensure that the backend is deployed to Cloud Run (or running locally) and properly configured before interacting with this frontend.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Getting Started
 
-## Expanding the ESLint configuration
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Run the development server: `npm run dev`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### API Configuration
+In development, API requests starting with `/api` are proxied to the deployed Cloud Run instance. This can be configured in `vite.config.js`.
+
+To test locally without modifying IAM policies on Cloud Run, use the **Settings (gear icon)** in the UI to paste your GCP Identity Token.
