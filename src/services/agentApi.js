@@ -1,6 +1,7 @@
 export const submitExpense = async (payload, authToken, onStatusUpdate) => {
-  const sessionUrl = "/api/apps/expense_agent/users/demo_user/sessions";
-  const runUrl = "/api/run";
+  const baseUrl = import.meta.env.VITE_BACKEND_URL || "/api";
+  const sessionUrl = `${baseUrl}/apps/expense_agent/users/demo_user/sessions`;
+  const runUrl = `${baseUrl}/run`;
 
   const headers = {
     "Content-Type": "application/json",
