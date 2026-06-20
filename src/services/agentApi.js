@@ -1,4 +1,4 @@
-export const submitExpense = async (payload, authToken, onStatusUpdate) => {
+export const submitExpense = async (payload, onStatusUpdate) => {
   const baseUrl = import.meta.env.VITE_BACKEND_URL || "/api";
   const sessionUrl = `${baseUrl}/apps/expense_agent/users/demo_user/sessions`;
   const runUrl = `${baseUrl}/run`;
@@ -7,9 +7,7 @@ export const submitExpense = async (payload, authToken, onStatusUpdate) => {
     "Content-Type": "application/json",
   };
 
-  if (authToken) {
-    headers["Authorization"] = `Bearer ${authToken}`;
-  }
+
 
   try {
     // Step 1: Create a new session
