@@ -39,11 +39,13 @@ steps:
           --project ${_PROD_PROJECT_ID} \
           --region ${_REGION} \
           --platform managed \
-          --allow-unauthenticated
+          --allow-unauthenticated \
+          --service-account ${_APP_SERVICE_ACCOUNT_PROD}
 
 substitutions:
   _PROD_PROJECT_ID: YOUR_PROD_PROJECT_ID
   _REGION: us-east1
+  _APP_SERVICE_ACCOUNT_PROD: ambient-expense-agent-app@gen-lang-client-0675989879.iam.gserviceaccount.com
 
 logsBucket: gs://${PROJECT_ID}-ambient-expense-agent-logs/build-logs
 options:

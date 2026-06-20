@@ -39,7 +39,8 @@ steps:
           --project ${_STAGING_PROJECT_ID} \
           --region ${_REGION} \
           --platform managed \
-          --allow-unauthenticated
+          --allow-unauthenticated \
+          --service-account ${_APP_SERVICE_ACCOUNT_STAGING}
 
   # Trigger Prod Deployment
   - name: gcr.io/cloud-builders/gcloud
@@ -72,6 +73,7 @@ steps:
 substitutions:
   _STAGING_PROJECT_ID: YOUR_STAGING_PROJECT_ID
   _REGION: us-east1
+  _APP_SERVICE_ACCOUNT_STAGING: ambient-expense-agent-app@gen-lang-client-0675989879.iam.gserviceaccount.com
 
 logsBucket: gs://${PROJECT_ID}-ambient-expense-agent-logs/build-logs
 options:
