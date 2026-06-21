@@ -41,8 +41,4 @@ Built with Vite, React, and Vanilla CSS, the UI handles user interaction and age
 
 This frontend is fully containerized and deployed to **Google Cloud Run**.
 
-The deployment process is managed automatically via Google Cloud Build. Pushing to the `master` branch triggers the CI/CD pipeline which:
-1. Builds a production optimized Vite bundle (`npm run build`).
-2. Packages the static assets alongside the Express.js proxy server into a Docker image.
-3. Deploys the image to Cloud Run as a publicly accessible service (`ambient-expense-agent-frontend`).
-4. Automatically wires up the proxy to securely communicate with the private backend.
+For a full, in-depth guide on exactly how this is deployed, configured in CI/CD, and how the complex IAM security rules and service-to-service authentication work, please read the **[Google Cloud Deployment Guide](./DEPLOYMENT.md)**.
