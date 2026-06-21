@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-const BACKEND_URL = process.env.BACKEND_URL || 'https://ambient-expense-agent-917737942418.europe-west2.run.app';
+const BACKEND_URL = process.env.BACKEND_URL || 'https://ambient-expense-agent-cvinmrfe6q-nw.a.run.app';
 
 const auth = new GoogleAuth();
 
@@ -35,9 +35,12 @@ const injectIdentityToken = async (req, res, next) => {
     const headers = await client.getRequestHeaders();
     if (headers.Authorization) {
       req.headers['authorization'] = headers.Authorization;
+      console.log('Injected token for audience:', BACKEND_URL, 'Length:', headers.Authorization.length);
+    } else {
+      console.log('No authorization header returned by client for audience:', BACKEND_URL);
     }
   } catch (error) {
-    console.error('Error fetching identity token:', error);
+    console.error('Error fetching identity token for audience', BACKEND_URL, ':', error);
   }
   next();
 };
