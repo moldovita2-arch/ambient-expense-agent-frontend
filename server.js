@@ -32,13 +32,18 @@ const apiProxy = createProxyMiddleware({
 const injectIdentityToken = async (req, res, next) => {
   try {
     const client = await auth.getIdTokenClient(BACKEND_URL);
-    const headers = await client.getRequestHeaders();
-    const authHeader = headers.Authorization || headers.authorization;
-    if (authHeader) {
-      req.headers['authorization'] = authHeader;
-      console.log('Injected token for audience:', BACKEND_URL, 'Length:', authHeader.length);
+    let idToken;
+    if (client.idTokenProvider) {
+      idToken = await client.idTokenProvider.fetchIdToken(BACKEND_URL);
     } else {
-      console.log('No authorization header returned by client for audience:', BACKEND_URL);
+      console.log('No idTokenProvider found on client!');
+    }
+    
+    if (idToken) {
+      req.headers['authorization'] = `Bearer ${idToken}`;
+      console.log('Injected token for audience:', BACKEND_URL, 'Length:', idToken.length);
+    } else {
+      console.log('Failed to fetch idToken for audience:', BACKEND_URL);
     }
   } catch (error) {
     console.error('Error fetching identity token for audience', BACKEND_URL, ':', error);
