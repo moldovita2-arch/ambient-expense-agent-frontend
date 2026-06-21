@@ -33,9 +33,10 @@ const injectIdentityToken = async (req, res, next) => {
   try {
     const client = await auth.getIdTokenClient(BACKEND_URL);
     const headers = await client.getRequestHeaders();
-    if (headers.Authorization) {
-      req.headers['authorization'] = headers.Authorization;
-      console.log('Injected token for audience:', BACKEND_URL, 'Length:', headers.Authorization.length);
+    const authHeader = headers.Authorization || headers.authorization;
+    if (authHeader) {
+      req.headers['authorization'] = authHeader;
+      console.log('Injected token for audience:', BACKEND_URL, 'Length:', authHeader.length);
     } else {
       console.log('No authorization header returned by client for audience:', BACKEND_URL);
     }
