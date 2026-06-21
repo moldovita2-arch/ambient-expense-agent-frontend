@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Settings, Send, CheckCircle, AlertCircle, Clock } from 'lucide-react';
-import { submitExpense } from '../services/agentApi';
+import { submitExpense, replyToAgent } from '../services/agentApi';
 
 export default function ExpenseForm() {
   const [showSettings, setShowSettings] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null); // { type: 'success' | 'error' | 'info', message: '' }
+  const [sessionId, setSessionId] = useState(null);
+  const [replyText, setReplyText] = useState('');
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -39,9 +41,34 @@ export default function ExpenseForm() {
     if (result.success) {
       if (result.hitl) {
         setStatus({ type: 'info', message: result.message });
+        setSessionId(result.sessionId);
       } else {
         setStatus({ type: 'success', message: result.message });
         // Reset form on complete success
+        setFormData({ ...formData, amount: '', description: '' });
+      }
+    } else {
+      setStatus({ type: 'error', message: result.message });
+    }
+    
+    setLoading(false);
+  };
+
+  const handleReply = async (actionText) => {
+    if (!sessionId) return;
+    setLoading(true);
+    setStatus(null);
+
+    const result = await replyToAgent(sessionId, actionText);
+    
+    if (result.success) {
+      if (result.hitl) {
+        setStatus({ type: 'info', message: result.message });
+        setSessionId(result.sessionId);
+      } else {
+        setStatus({ type: 'success', message: result.message });
+        setSessionId(null);
+        setReplyText('');
         setFormData({ ...formData, amount: '', description: '' });
       }
     } else {
@@ -160,6 +187,51 @@ export default function ExpenseForm() {
           {status.type === 'error' && <AlertCircle size={20} />}
           {status.type === 'info' && <Clock size={20} />}
           <span>{status.message}</span>
+        </div>
+      )}
+
+      {status && status.type === 'info' && sessionId && (
+        <div className="hitl-actions" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button 
+              type="button" 
+              className="submit-btn" 
+              style={{ flex: 1, backgroundColor: '#2e7d32' }} 
+              onClick={() => handleReply('approve')}
+              disabled={loading}
+            >
+              Approve
+            </button>
+            <button 
+              type="button" 
+              className="submit-btn" 
+              style={{ flex: 1, backgroundColor: '#c62828' }} 
+              onClick={() => handleReply('reject')}
+              disabled={loading}
+            >
+              Reject
+            </button>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+            <input 
+              type="text" 
+              className="glass-input" 
+              style={{ flex: 1 }} 
+              placeholder="Or type custom response..."
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              disabled={loading}
+            />
+            <button 
+              type="button" 
+              className="submit-btn" 
+              style={{ width: 'auto', padding: '0 16px' }}
+              onClick={() => handleReply(replyText)}
+              disabled={loading || !replyText.trim()}
+            >
+              Reply
+            </button>
+          </div>
         </div>
       )}
     </div>
