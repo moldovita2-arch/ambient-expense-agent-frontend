@@ -52,7 +52,7 @@ app.use('/api', apiProxy);
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Fallback to index.html for React Router (if used)
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
