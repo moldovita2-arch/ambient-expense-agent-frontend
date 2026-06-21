@@ -20,24 +20,7 @@ const apiProxy = createProxyMiddleware({
   pathRewrite: {
     '^/api': '', // Remove /api from the URL before proxying
   },
-  router: async (req) => {
-    // Return the target directly if no custom logic is needed to change it dynamically
-    return BACKEND_URL;
-  },
   on: {
-    proxyReq: async (proxyReq, req, res) => {
-      try {
-        // Fetch identity token for the backend audience
-        const client = await auth.getIdTokenClient(BACKEND_URL);
-        const headers = await client.getRequestHeaders();
-        if (headers.Authorization) {
-          proxyReq.setHeader('Authorization', headers.Authorization);
-          console.log(`Added authorization header to request for ${req.url}`);
-        }
-      } catch (error) {
-        console.error('Error fetching identity token:', error);
-      }
-    },
     error: (err, req, res) => {
       console.error('Proxy Error:', err);
       res.status(500).send('Proxy Error');
@@ -45,8 +28,22 @@ const apiProxy = createProxyMiddleware({
   }
 });
 
-// Use the proxy for all /api requests
-app.use('/api', apiProxy);
+// Middleware to inject IAM identity token
+const injectIdentityToken = async (req, res, next) => {
+  try {
+    const client = await auth.getIdTokenClient(BACKEND_URL);
+    const headers = await client.getRequestHeaders();
+    if (headers.Authorization) {
+      req.headers['authorization'] = headers.Authorization;
+    }
+  } catch (error) {
+    console.error('Error fetching identity token:', error);
+  }
+  next();
+};
+
+// Use the token middleware then the proxy for all /api requests
+app.use('/api', injectIdentityToken, apiProxy);
 
 // Serve static files from the Vite build output directory
 app.use(express.static(path.join(__dirname, 'dist')));
